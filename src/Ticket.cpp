@@ -24,6 +24,7 @@ void Ticket::enviarMensaje(const Mensaje& agregarMensaje){
 
 void Ticket::setRepresentante(Representante* representante){
     this->representante = representante;
+    this->estado="Activo";
 }
 
 void Ticket::crearMensajeRepresentante(){
@@ -60,17 +61,18 @@ void Ticket::setEstadoTicket(){
     int opcion ;
     
     cout <<"Estado actual: " << this->getEstado() << endl;
-    cout << "Seleccione el nuevo estado del ticket con su respectivo numero: " << endl;
-    cout << " 1_ Activo " << endl;
-    cout << " 2_ Espera" << endl;
-    cout << " 3_ Cerrado " << endl;
-    cin >> opcion;
+
+    do{
+        cout << "Seleccione el nuevo estado del ticket con su respectivo numero: " << endl;
+        cout << " 1_ Activo " << endl;
+        cout << " 2_ Espera" << endl;
+        cout << " 3_ Cerrado " << endl;
+        cin >> opcion;
+    } while (opcion < 1 || opcion > 3);
 
     switch (opcion){
-
         case 1:
         estado_modificable = "Activo";
-        
         break;
 
         case 2:
@@ -80,8 +82,6 @@ void Ticket::setEstadoTicket(){
         case 3:
         estado_modificable = "Cerrado";
         break;
-
-        default:
     };
 
     this->estado = estado_modificable;
@@ -131,9 +131,6 @@ void Ticket::getTicketData(){
     cout <<"Cliente: "<< cliente->nombre << endl;
     cout << "Incidentes: " << endl; 
     this->getIncidente();
-    cout << "Mensajes: " << endl;
-    this->getMensajes();
-
 }
 
 Cliente* Ticket::getCliente(){
