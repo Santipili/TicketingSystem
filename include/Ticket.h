@@ -22,8 +22,9 @@ private:
     void enviarMensaje(const Mensaje& agregarMensaje);
     
 public:
+    Ticket(){};
     Ticket(Incidente incidente, Cliente* cliente);
-    ~Ticket(){};
+    ~Ticket();
 
     void crearMensajeRepresentante();
     void crearMensajeCliente();

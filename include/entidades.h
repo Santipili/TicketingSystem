@@ -7,6 +7,14 @@
 
 using namespace std;
 
+struct Cuenta
+{
+    MessageSender *sender;
+    string direccion;
+
+    Cuenta() : direccion("") {};
+};
+
 struct Representante
 {
     int id;
@@ -22,14 +30,6 @@ struct Cliente
     list <Cuenta> cuentas;
 
     Cliente() : id(0), nombre(""), cuentas() {};
-};
-
-struct Cuenta
-{
-    MessageSender *sender;
-    string direccion;
-
-    Cuenta() : direccion("") {};
 };
 
 struct Mensaje
