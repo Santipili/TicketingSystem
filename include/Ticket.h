@@ -23,25 +23,23 @@ private:
     
 public:
     Ticket(){};
-    Ticket(Incidente incidente, Cliente* cliente);
+    Ticket(Incidente incidente, Cliente* cliente, int id);
     ~Ticket();
 
-    void crearMensajeRepresentante();
-    void crearMensajeCliente();
+    void crearMensajeRepresentante(string message);
+    void crearMensajeCliente(string message);
     void setEstadoTicket();
     void setRepresentante(Representante* representante);
     void crearIncidente();
 
+    void readIncidente();
+    void readMensajes();    
     void getTicketData();
-    void getIncidente();
-    void getMensajes();
+
     string getEstado();
-    int getTicketId();
-
-
+    int getTicketId() const;
     Cliente* getCliente();
     Representante* getRepresentante();
-
 
 };
 

@@ -2,12 +2,71 @@
 #include <queue>
 #include <string>
 #include <list>
+#include <vector>
 #include "./include/Ticket.h" 
 #include "./include/entidades.h"
-// #include "./include/database.h"
-
 using namespace std;
 
+struct PoolMessageSender{
+    static Email emailSender;
+    static Instagram instagramSender;
+    static Facebook facebookSender;
+    static Whatsapp whatsappSender;
+};
+
+Email PoolMessageSender::emailSender = {};
+Instagram PoolMessageSender::instagramSender = {};
+Facebook PoolMessageSender::facebookSender = {};
+Whatsapp PoolMessageSender::whatsappSender = {};
+
+struct PoolCuentas {
+    static Cuenta cuenta1;
+    static Cuenta cuenta2;
+};
+Cuenta PoolCuentas::cuenta1 = { "Jose@gmail.com", new Email() };
+Cuenta PoolCuentas::cuenta2 = { "Gabriel@gmail.com", new Email() };
+
+struct PoolClientes {
+    static Cliente cliente1;
+    static Cliente cliente2;
+};
+Cliente PoolClientes::cliente1 = {1001, "Jose", list<Cuenta>{ PoolCuentas::cuenta1 }};
+Cliente PoolClientes::cliente2 = {1002, "Gabriel", list<Cuenta>{ PoolCuentas::cuenta2 }};
+
+struct PoolRepresentantes {
+    static Representante representante1;
+    static Representante representante2;
+};
+Representante PoolRepresentantes::representante1 = { 1001, "Santiago" };
+Representante PoolRepresentantes::representante2 = { 1002, "Mateo" };
+
+struct Poolincidentes {
+    static Incidente incidente;
+};
+Incidente Poolincidentes::incidente = { 1001, "Cuando uses la fuerza, acordate de limpiar el lado oscuro" };
+
+struct PoolTickets {
+    static Ticket ticket1;
+};
+Ticket PoolTickets::ticket1 = { Poolincidentes::incidente, &PoolClientes::cliente1, 1 };
+
+list<Representante> representantes;
+list<Cliente> clientes;
+list<Ticket> ticketsAtendidos;
+queue<Ticket> colaMostrador;  
+queue<Ticket> colaLlamadas; 
+
+void inicializarSistema() {
+    // Inicializar representantes
+    clientes.push_back(PoolClientes::cliente1);
+    clientes.push_back(PoolClientes::cliente2);
+
+    representantes.push_back(PoolRepresentantes::representante1);
+    representantes.push_back(PoolRepresentantes::representante2);
+    PoolTickets::ticket1.setRepresentante(&PoolRepresentantes::representante1);
+
+    ticketsAtendidos.push_back(PoolTickets::ticket1);
+}
 
 int menuPrincipal() {
     int opcion;
@@ -25,7 +84,6 @@ int menuPrincipal() {
     return opcion;
 }
 
-
 int menuCliente() {
     int opcion;
     do {
@@ -40,7 +98,6 @@ int menuCliente() {
     } while (opcion < 1 || opcion > 4);
     return opcion;
 }
-
 
 int menuRepresentante() {
     int opcion;
@@ -65,75 +122,77 @@ void agregarClienteACola(queue<Ticket>& cola, Cliente* cliente) {
     cout <<"Ingrese el incidente: " << endl;
     getline(cin, incidente.contenido);
 
-    Ticket nuevoTicket = Ticket(incidente, cliente); 
+    Ticket nuevoTicket = Ticket(incidente, cliente, ticketsAtendidos.size() + 1); 
     cola.push(nuevoTicket);       
-    cout << "Ticket creado y añadido a la cola." << endl;
+    cout << "Ticket creado y agregado a la cola." << endl<< endl;    
 }
 
 void atenderTicket(queue<Ticket>& cola, Representante* representante, list<Ticket>& ticketsAtendidos) {
     if (!cola.empty()) {
         Ticket ticketActual = cola.front();
-        cola.pop();  // Elimino el ticket de la cola en espera
 
-        ticketActual.setRepresentante(representante);
+        ticketActual.getTicketData();
         ticketActual.setEstadoTicket();
-        ticketActual.crearMensajeRepresentante();
+        ticketActual.setRepresentante(representante);
+
+        string texto;
+        cout << "Ingresar mensaje"<< endl;
+        getline(std::cin, texto);
+        ticketActual.crearMensajeRepresentante(texto);
 
         ticketsAtendidos.push_back(ticketActual);
 
-        ticketActual.getTicketData();
         cout << "Ticket en proceso por el representante " << representante->nombre << endl;
+        cola.pop();  
     } else {
         cout << "No hay tickets en la cola." << endl;
     }
 }
 
-// Función para agregar un nuevo cliente y crear un ticket
 void registrarNuevoCliente(queue<Ticket>& colaMostrador, queue<Ticket>& colaLlamadas, list<Cliente>& clientes ) {
-    Cliente nuevoCliente;
     cout << "Ingrese su nombre: ";
-    getline(cin, nuevoCliente.nombre);
+    string nombre;
+    getline(cin, nombre);
 
-    nuevoCliente.id = clientes.size() + 1001;
-    
-    // Registro de cuentas
+    int id = clientes.size() + 1001;
+
     string direccion;
     Cuenta nuevaCuenta;
+    list <Cuenta> cuentasCliente;
 
     cout << "Email: ";
     getline(cin, direccion);
     if (!direccion.empty()) {
-        nuevaCuenta.sender = new Email();
+        nuevaCuenta.sender = &PoolMessageSender::emailSender;
         nuevaCuenta.direccion = direccion;
-        nuevoCliente.cuentas.push_back(nuevaCuenta);
+        cuentasCliente.push_back(nuevaCuenta);
     }
 
     cout << "Instagram: ";
     getline(cin, direccion);
     if (direccion != "") {
-        nuevaCuenta.sender= new Instagram();
+        nuevaCuenta.sender= &PoolMessageSender::instagramSender;
         nuevaCuenta.direccion = direccion;
-        nuevoCliente.cuentas.push_back(nuevaCuenta);
+        cuentasCliente.push_back(nuevaCuenta);
     }
 
     cout << "Facebook: ";
     getline(cin, direccion);
     if (direccion != "") {
-        nuevaCuenta.sender= new Facebook();
+        nuevaCuenta.sender= &PoolMessageSender::facebookSender;
         nuevaCuenta.direccion = direccion;
-        nuevoCliente.cuentas.push_back(nuevaCuenta);
+        cuentasCliente.push_back(nuevaCuenta);
     }
 
     cout << "Whatsapp: ";
     getline(cin, direccion);
     if (direccion != "") {
-        nuevaCuenta.sender= new Whatsapp();
+        nuevaCuenta.sender= &PoolMessageSender::whatsappSender;
         nuevaCuenta.direccion = direccion;
-        nuevoCliente.cuentas.push_back(nuevaCuenta);
+        cuentasCliente.push_back(nuevaCuenta);
     }
 
-    clientes.push_back(nuevoCliente);
-    cout << "Id de cliente: " << nuevoCliente.id << endl;
+    clientes.emplace_back( id, nombre, cuentasCliente );
     cout << "Nuevo Cliente registrado." << endl;
 
     // Registro de cliente en cola de mostrador o llamada
@@ -142,13 +201,12 @@ void registrarNuevoCliente(queue<Ticket>& colaMostrador, queue<Ticket>& colaLlam
     cin >> tipoIngreso;
     cin.ignore();
     if (tipoIngreso == 1) {
-        agregarClienteACola(colaMostrador, &nuevoCliente);
+        agregarClienteACola(colaMostrador, &clientes.back());
     } else if (tipoIngreso == 2) {
-        agregarClienteACola(colaLlamadas, &nuevoCliente);
+        agregarClienteACola(colaLlamadas, &clientes.back());
     }
 }
 
-// Función para gestionar un cliente existente
 void gestionarClienteExistente(list<Cliente>& clientes, list<Ticket>& ticketsAtendidos) {
     int idCliente;
     cout << "Id de cliente: ";
@@ -166,56 +224,65 @@ void gestionarClienteExistente(list<Cliente>& clientes, list<Ticket>& ticketsAte
         int idTicket;
         Ticket* ticketCliente = nullptr;
 
-        int opcionCliente = menuCliente();
-        switch (opcionCliente) {
-            case 1:
-                // Mostrar lista de tickets
-                for (auto& ticket : ticketsAtendidos) {
-                    if (ticket.getCliente()->id == clienteIngresante->id) {
-                        cout << "Id de ticket: " << ticket.getTicketId() << endl;
-                        ticket.getTicketData();
+        bool salir = false;
+        while (!salir) {
+            int opcionCliente = menuCliente();
+            switch (opcionCliente) {
+                case 1:
+                    // Mostrar lista de tickets
+                    for (auto& ticket : ticketsAtendidos) {
+                        if (ticket.getCliente()->id == clienteIngresante->id) {
+                            ticket.getTicketData();
+                        }
                     }
-                }
-                cin.ignore();
-                break;
-            case 2:
-                // Leer mensajes de un ticket
-                cout << "Id de ticket: ";
-                cin >> idTicket;
-                
-                for (auto& ticket : ticketsAtendidos) {
-                    if (ticket.getTicketId() == idTicket) {
-                        ticketCliente = &ticket;
-                        break;
+                    cin.ignore();
+                    break;
+                case 2:
+                    // Leer mensajes de un ticket
+                    cout << "Id de ticket: ";
+                    cin >> idTicket;
+                    cin.ignore();
+                    
+                    for (auto& ticket : ticketsAtendidos) {
+                        if (ticket.getTicketId() == idTicket) {
+                            ticketCliente = &ticket;
+                            break;
+                        }
                     }
-                }
-                if (ticketCliente) {
-                    ticketCliente->getMensajes();
-                }
-                ticketCliente = nullptr;
-                break;
-            case 3:
-                // Agregar nuevo mensaje
-                cout << "Id de ticket: ";
-                cin >> idTicket;
+                    if (ticketCliente) {
+                        ticketCliente->readMensajes();
+                    }
+                    ticketCliente = nullptr;
+                    break;
+                case 3:
+                    // Agregar nuevo mensaje
+                    cout << "Id de ticket: ";
+                    cin >> idTicket;
+                    cin.ignore();
 
-                for (auto& ticket : ticketsAtendidos) {
-                    if (ticket.getTicketId() == idTicket) {
-                        ticketCliente = &ticket;
-                        break;
+                    for (auto& ticket : ticketsAtendidos) {
+                        if (ticket.getTicketId() == idTicket) {
+                            ticketCliente = &ticket;
+                            break;
+                        }
                     }
-                }
 
-                if (ticketCliente) {
-                    ticketCliente->crearMensajeCliente();
-                }
-                ticketCliente = nullptr;
-                break;
+                    if (ticketCliente) {
+                        string texto;
+                        cout << "Ingresar mensaje"<< endl;
+                        getline(std::cin, texto);
+                        ticketCliente->crearMensajeCliente(texto);
+                    }
+                    ticketCliente = nullptr;
+                    break;
+                case 4:
+                    salir = true;
+                    break;
+            }
         }
     }
 }
 
-// Función para gestionar un representante
 void gestionarRepresentante(queue<Ticket>& colaMostrador, queue<Ticket>& colaLlamadas, list<Ticket>& ticketsAtendidos, list<Representante>& representantes) {
     int idRepresentante;
     cout << "Id de representante: ";
@@ -232,137 +299,115 @@ void gestionarRepresentante(queue<Ticket>& colaMostrador, queue<Ticket>& colaLla
     if (representanteIngresante) {
         int idTicket;
         Ticket* ticketRepresentante = nullptr;
-        int opcionRepresentante = menuRepresentante();
-        switch (opcionRepresentante) {
-            case 1:
-                // Ver Tickets y Mensajes
-                for (auto& ticket : ticketsAtendidos) {
-                    if (ticket.getRepresentante() == representanteIngresante) {
-                        ticket.getTicketData();
-                    }
-                }
-                break;
-            case 2:
-                // Leer mensajes de un ticket
-                cout << "Id de ticket: ";
-                cin >> idTicket;
-                
-                for (auto& ticket : ticketsAtendidos) {
-                    if (ticket.getTicketId() == idTicket) {
-                        ticketRepresentante = &ticket;
-                        break;
-                    }
-                }
-                if (ticketRepresentante) {
-                    ticketRepresentante->getMensajes();
-                }
+        std::vector<Ticket> tickets;
 
-                break;
-            case 3:
-                // Agregar nuevo mensaje
-                cout << "Id de ticket: ";
-                cin >> idTicket;
-
-                for (auto& ticket : ticketsAtendidos) {
-                    if (ticket.getTicketId() == idTicket) {
-                        ticketRepresentante = &ticket;
-                        break;
+        bool salir = false;
+        while (!salir) {
+            int opcionRepresentante = menuRepresentante();
+            switch (opcionRepresentante) {
+                case 1:
+                    // Ver Tickets y Mensajes
+                    for (auto& ticket : ticketsAtendidos) {
+                        if (ticket.getRepresentante()->id == representanteIngresante->id) {
+                            cout <<"Tickets: "<< endl;
+                            ticket.getTicketData();
+                            cout << endl;
+                        }
                     }
-                }
-                if (ticketRepresentante) {
-                    ticketRepresentante->crearMensajeCliente();
-                }
-                break;
-            case 4:
-                break;
-            case 5:
-                 // Atender nuevo Ticket
-                int tipoAtencion;
-                cout << "Atender: 1 para mostrador, 2 para llamada: ";
-                cin >> tipoAtencion;
-                cin.ignore();
-                if (tipoAtencion == 1) {
-                    atenderTicket(colaMostrador, representanteIngresante, ticketsAtendidos);
-                } else if (tipoAtencion == 2) {
-                    atenderTicket(colaLlamadas, representanteIngresante, ticketsAtendidos);
-                }
-                break;
-            case 6:
-                 // Cambiar estado de ticket
-
-                cout << "Id de ticket: ";
-                cin >> idTicket;
-
-                for (auto& ticket : ticketsAtendidos) {
-                    if (ticket.getTicketId() == idTicket) {
-                        ticketRepresentante = &ticket;
-                        break;
+                    break;
+                case 2:
+                    // Leer mensajes de un ticket
+                    cout << "Id de ticket: ";
+                    cin >> idTicket;
+                    cin.ignore();
+                    
+                    for (auto& ticket : ticketsAtendidos) {
+                        if (ticket.getTicketId() == idTicket) {
+                            ticketRepresentante = &ticket;
+                            break;
+                        }
                     }
-                }
-                if (ticketRepresentante) {
-                    ticketRepresentante->setEstadoTicket();
-                }
-                break;
-        }      
+                    if (ticketRepresentante) {
+                        ticketRepresentante->readMensajes();
+                    }
+                    else {
+                        cout << "Ticket no encontrado." << endl;
+                    }
+
+                    break;
+                case 3:
+                    // Agregar nuevo mensaje
+                    cout << "Id de ticket: ";
+                    cin >> idTicket;
+                    cin.ignore();
+
+                    for (auto& ticket : ticketsAtendidos) {
+                        if (ticket.getTicketId() == idTicket) {
+                            ticketRepresentante = &ticket;
+                            break;
+                        }
+                    }
+                    if (ticketRepresentante) {
+                        string texto;
+                        cout << "Ingresar mensaje"<< endl;
+                        getline(std::cin, texto);
+                        ticketRepresentante->crearMensajeRepresentante(texto);
+                    }
+                    else {
+                        cout << "Ticket no encontrado." << endl;
+                    }
+                    break;
+                case 4:
+                    // Copiar los elementos de la cola de llamadas al vector
+
+                    cout<<"Llamadas por atender: " << endl;
+                    cout << colaLlamadas.size() << endl;
+                    cout<< endl;
+                    
+                    cout <<"Tickets por Mostrador: " << endl;
+                    cout << colaMostrador.size() << endl;
+                    cout<< endl;
+
+
+                    break;
+                case 5:
+                    // Atender nuevo Ticket
+                    int tipoAtencion;
+                    cout << "Atender: 1 para mostrador, 2 para llamada: ";
+                    cin >> tipoAtencion;
+                    cin.ignore();
+                    if (tipoAtencion == 1) {
+                        atenderTicket(colaMostrador, representanteIngresante, ticketsAtendidos);
+                    } else if (tipoAtencion == 2) {
+                        atenderTicket(colaLlamadas, representanteIngresante, ticketsAtendidos);
+                    }
+                    break;
+                case 6:
+                    // Cambiar estado de ticket
+                    cout << "Id de ticket: ";
+                    cin >> idTicket;
+                    cin.ignore();
+
+                    for (auto& ticket : ticketsAtendidos) {
+                        if (ticket.getTicketId() == idTicket) {
+                            ticketRepresentante = &ticket;
+                            break;
+                        }
+                    }
+                    if (ticketRepresentante) {
+                        ticketRepresentante->setEstadoTicket();
+                    }
+                    break;
+                case 7:
+                    salir = true;
+                    break;
+            } 
+        }     
        
     }
 }
 
-    list<Representante> representantes;
-    list<Cliente> clientes;
-    list<Ticket> ticketsAtendidos;
-void inicializarSistema() {
-    // Inicializar cuentas
-    Cuenta cuenta1;
-    cuenta1.direccion = "Jose@gmail.com";
-    cuenta1.sender = new Email();
-
-    Cuenta cuenta2;
-    cuenta2.direccion = "Gabriel@gmail.com";
-    cuenta2.sender = new Email();
-
-    // Inicializar clientes
-    Cliente cliente1;
-    cliente1.id = 1001;
-    cliente1.nombre = "Jose";
-    cliente1.cuentas.push_back(cuenta1);
-
-    Cliente cliente2;
-    cliente2.id = 1002;
-    cliente2.nombre = "Gabriel";
-    cliente2.cuentas.push_back(cuenta2);
-
-    clientes.push_back(cliente1);
-    clientes.push_back(cliente2);
-
-    // Inicializar representantes
-    Representante representante1;
-    representante1.id = 1001;
-    representante1.nombre = "Santiago";
-
-    Representante representante2;
-    representante2.id = 1002;
-    representante2.nombre = "Mateo";
-
-    representantes.push_back(representante1);
-    representantes.push_back(representante2);
-
-    // Inicializar tickets
-    Incidente incidente;
-    incidente.id = 1001;
-    incidente.contenido = "Cuando uses la fuerza, acordate de limpiar el lado oscuro";
-
-    Ticket ticket1(incidente, &cliente1);
-    ticket1.setRepresentante(&representante1);
-    ticketsAtendidos.push_back(ticket1);
-}
-
-
 int main() {
-
-    queue<Ticket> colaMostrador;  
-    queue<Ticket> colaLlamadas; 
-
     inicializarSistema();
 
     bool salir = false;

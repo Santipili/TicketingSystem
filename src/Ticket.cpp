@@ -7,9 +7,10 @@
 using namespace std;
 
 
-Ticket::Ticket(Incidente incidente, Cliente* cliente){
+Ticket::Ticket(Incidente incidente, Cliente* cliente, int id){
     listaIncidentes.push_back(incidente);
     this->cliente = cliente;
+    this->id = id;
     this->estado = "Espera";
 }
 
@@ -18,8 +19,9 @@ Ticket::~Ticket(){}
 void Ticket::enviarMensaje(const Mensaje& agregarMensaje){
     // este metodo es privado para q al crear un mensaje el representante se envie la notificacion al cliente
     for (auto& cuenta : cliente->cuentas) {
-        cuenta.sender->sendMessage(agregarMensaje.contenido);
+        cuenta.sender->sendMessage(agregarMensaje.contenido, cuenta.direccion);
     }
+    cout << endl;
 }
 
 void Ticket::setRepresentante(Representante* representante){
@@ -27,31 +29,24 @@ void Ticket::setRepresentante(Representante* representante){
     this->estado="Activo";
 }
 
-void Ticket::crearMensajeRepresentante(){
+void Ticket::crearMensajeRepresentante(string message){
     Mensaje mensaje;
 
-    string texto;
-    cout << "Ingresar mensaje"<< endl;
-    getline(std::cin, texto);
-     
     mensaje.autor = representante->nombre;
     mensaje.destinatario = cliente->nombre;
-    mensaje.contenido = texto;
+    mensaje.contenido = message;
 
     listaMensajes.push_back(mensaje);
     enviarMensaje(mensaje);
 }; 
 
-void Ticket::crearMensajeCliente(){
+void Ticket::crearMensajeCliente(string message){
     Mensaje mensaje;
 
-    string texto;
-    cout << "Ingresar mensaje"<< endl;
-    getline(std::cin, texto);
      
     mensaje.autor = cliente->nombre;
     mensaje.destinatario = representante->nombre;
-    mensaje.contenido = texto;
+    mensaje.contenido = message;
     listaMensajes.push_back(mensaje);
 };
 
@@ -113,52 +108,50 @@ void Ticket::crearIncidente(){
     cout << "Nuevo incidente agregado con ID: " << nuevo_incidente.id << endl;
 }
 
-int Ticket::getTicketId(){
+void Ticket::readIncidente(){
+    int count = 1;
+    for (auto& Incidente : listaIncidentes) {
+        cout << count<< "_ ";
+        cout << Incidente.contenido << endl;
+        count++;
+    }
+}
+
+void Ticket::readMensajes(){
+    if (listaMensajes.empty()) {
+        cout << "No hay mensajes." << endl << endl;
+        return;
+    }
+
+    for (auto it = listaMensajes.begin(); it != listaMensajes.end(); ++it) {
+        cout << it->autor <<":"<< endl;
+        cout <<"        " << it->contenido<< endl;
+        }
+    cout << endl;
+}
+void Ticket::getTicketData(){
+    cout <<"Id: "<< id << endl;
+    cout <<"Estado: "<< estado << endl;
+    cout <<"Cliente: "<< cliente->nombre << endl;
+    cout << "Incidentes: "; 
+    this->readIncidente();
+}
+
+Cliente* Ticket::getCliente(){
+    return this->cliente;
+}
+
+Representante* Ticket::getRepresentante(){
+    return this->representante;
+}
+
+int Ticket::getTicketId() const{
     return this->id;
 }
 string Ticket::getEstado(){
     return this-> estado;
 };
 
-void Ticket::getIncidente(){
-    for (auto& Incidente : listaIncidentes) {
-        cout << Incidente.id << endl;
-    }
-}
-
-void Ticket::getMensajes(){
-
-    for (auto it = listaMensajes.begin(); it != listaMensajes.end(); ++it) {
-        cout << it->autor <<":"<< endl;
-        cout <<"        " << it->contenido<< endl;
-        }
-}
-void Ticket::getTicketData(){
-    cout <<"Id: "<< id << endl;
-    cout <<"Estado: "<< estado << endl;
-    cout <<"Cliente: "<< cliente->nombre << endl;
-    cout << "Incidentes: " << endl; 
-    this->getIncidente();
-}
-
-Cliente* Ticket::getCliente(){
-
-    cout << this->cliente->id << endl;
-    cout << this->cliente->nombre << endl;
-    for (const auto& cuenta : cliente->cuentas) {
-        cout << "- Direccion : " << cuenta.direccion << endl;
-    }
-
-    return this->cliente;
-}
-
-Representante* Ticket::getRepresentante(){
-
-    cout << "Identificador: " << this->representante->id << endl;
-    cout << "Nombre: " << this->representante->nombre << endl;
-
-    return this->representante;
-}
 
 
 
