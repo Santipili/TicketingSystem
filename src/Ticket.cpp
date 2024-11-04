@@ -112,7 +112,7 @@ void Ticket::crearIncidente(){
     cout << "Nuevo incidente agregado con ID: " << nuevo_incidente.id << endl;
 }
 
-int Ticket::getTicketId(){
+int Ticket::getTicketId() const{
     return this->id;
 }
 string Ticket::getEstado(){

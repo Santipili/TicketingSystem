@@ -36,7 +36,7 @@ public:
     void getIncidente();
     void getMensajes();
     string getEstado();
-    int getTicketId();
+    int getTicketId() const;
 
 
     Cliente* getCliente();
