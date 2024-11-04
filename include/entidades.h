@@ -29,6 +29,11 @@ struct Cliente
 {
     Cliente() : id(0), nombre(""), cuentas() {};
     Cliente(int id, string nombre, const list <Cuenta> cuentas) : id(id), nombre(nombre), cuentas(cuentas) {};
+    ~Cliente() {
+            for (auto& it :cuentas) {
+                delete it.sender;
+            }
+    };
     int id;
     string nombre;
     list <Cuenta> cuentas;
