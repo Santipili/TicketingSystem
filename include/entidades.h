@@ -1,11 +1,13 @@
 #ifndef ENTIDADES_H
 #define ENTIDADES_H
 
+#include "./Ticket.h"
+#include "./MessageSender.h"
 #include <string>
 #include <list>
-#include "./MessageSender.h"
 
 using namespace std;
+
 
 struct Cuenta
 {
@@ -23,17 +25,17 @@ struct Representante
     int id;
     string nombre;
 
+    void verTicketsAtendidos(list<Ticket> &ticketsAtendidos) {
+     
+    };
+
 };
 
 struct Cliente
 {
     Cliente() : id(0), nombre(""), cuentas() {};
     Cliente(int id, string nombre, const list <Cuenta> cuentas) : id(id), nombre(nombre), cuentas(cuentas) {};
-    ~Cliente() {
-            for (auto& it :cuentas) {
-                delete it.sender;
-            }
-    };
+    ~Cliente() {};
     int id;
     string nombre;
     list <Cuenta> cuentas;

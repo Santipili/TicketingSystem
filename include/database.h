@@ -7,10 +7,39 @@
 #include <iostream>
 #include <list>
 
-extern std::list<Cliente> clientes;
-extern std::list<Representante> representantes;
-extern std::list<Ticket> ticketsAtendidos;
+struct PoolMessageSender{
+    static Email emailSender;
+    static Instagram instagramSender;
+    static Facebook facebookSender;
+    static Whatsapp whatsappSender;
+};
 
-void inicializarSistema(); // Declaración de la función para inicializar los datos
 
-#endif // DATABASE_H
+struct PoolCuentas {
+    static Cuenta cuenta1;
+    static Cuenta cuenta2;
+};
+
+
+struct PoolClientes {
+    static Cliente cliente1;
+    static Cliente cliente2;
+};
+
+
+struct PoolRepresentantes {
+    static Representante representante1;
+    static Representante representante2;
+};
+
+
+struct Poolincidentes {
+    static Incidente incidente;
+};
+
+
+struct PoolTickets {
+    static Ticket ticket1;
+};
+
+#endif 

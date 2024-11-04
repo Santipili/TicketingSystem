@@ -42,7 +42,6 @@ void Ticket::crearMensajeRepresentante(string message){
 
 void Ticket::crearMensajeCliente(string message){
     Mensaje mensaje;
-
      
     mensaje.autor = cliente->nombre;
     mensaje.destinatario = representante->nombre;
@@ -54,14 +53,11 @@ void Ticket::setEstadoTicket(){
 
     string estado_modificable;
     int opcion ;
-    
-    cout <<"Estado actual: " << this->getEstado() << endl;
 
     do{
         cout << "Seleccione el nuevo estado del ticket con su respectivo numero: " << endl;
         cout << " 1_ Activo " << endl;
         cout << " 2_ Espera" << endl;
-
         cout << " 3_ Re-Abierto " << endl;
         cout << " 4_ Cerrado " << endl;
         cin >> opcion;

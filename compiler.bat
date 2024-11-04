@@ -2,7 +2,7 @@
 echo Compilando el programa...
 
 :: Intentar compilar el código
-g++ ./src/Ticket.cpp ./src/MessageSender.cpp  main.cpp  -o TicketingSystem.exe -lstdc++
+g++ ./src/Ticket.cpp ./src/MessageSender.cpp ./src/database.cpp main.cpp  -o TicketingSystem.exe -lstdc++
 
 :: Verificar si la compilación fue exitosa
 if %errorlevel% neq 0 (

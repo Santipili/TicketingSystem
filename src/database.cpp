@@ -1,51 +1,22 @@
 #include "../include/database.h"
+#include "../include/entidades.h"
+#include "../include/Ticket.h"
+#include "../include/MessageSender.h"
 
-std::list<Cliente> clientes;
-std::list<Representante> representantes;
-std::list<Ticket> ticketsAtendidos;
+Email PoolMessageSender::emailSender = {};
+Instagram PoolMessageSender::instagramSender = {};
+Facebook PoolMessageSender::facebookSender = {};
+Whatsapp PoolMessageSender::whatsappSender = {};
 
-void inicializarSistema() {
-    // Inicializar cuentas
-    Cuenta cuenta1;
-    cuenta1.direccion = "Jose@gmail.com";
-    cuenta1.sender = new Email();
+Cuenta PoolCuentas::cuenta1 = { "Jose@gmail.com", new Email() };
+Cuenta PoolCuentas::cuenta2 = { "Gabriel@gmail.com", new Email() };
 
-    Cuenta cuenta2;
-    cuenta2.direccion = "Gabriel@gmail.com";
-    cuenta2.sender = new Email();
+Cliente PoolClientes::cliente1 = {1001, "Jose", list<Cuenta>{ PoolCuentas::cuenta1 }};
+Cliente PoolClientes::cliente2 = {1002, "Gabriel", list<Cuenta>{ PoolCuentas::cuenta2 }};
 
-    // Inicializar clientes
-    Cliente cliente1;
-    cliente1.id = 1001;
-    cliente1.nombre = "Jose";
-    cliente1.cuentas.push_back(cuenta1);
+Representante PoolRepresentantes::representante1 = { 1001, "Santiago" };
+Representante PoolRepresentantes::representante2 = { 1002, "Mateo" };
 
-    Cliente cliente2;
-    cliente2.id = 1002;
-    cliente2.nombre = "Gabriel";
-    cliente2.cuentas.push_back(cuenta2);
+Incidente Poolincidentes::incidente = { 1001, "Cuando uses la fuerza, acordate de limpiar el lado oscuro" };
 
-    clientes.push_back(cliente1);
-    clientes.push_back(cliente2);
-
-    // Inicializar representantes
-    Representante representante1;
-    representante1.id = 1001;
-    representante1.nombre = "Santiago";
-
-    Representante representante2;
-    representante2.id = 1002;
-    representante2.nombre = "Mateo";
-
-    representantes.push_back(representante1);
-    representantes.push_back(representante2);
-
-    // Inicializar tickets
-    Incidente incidente;
-    incidente.id = 1001;
-    incidente.contenido = "Cuando uses la fuerza, acordate de limpiar el lado oscuro";
-
-    Ticket ticket1(incidente, &cliente1);
-    ticket1.setRepresentante(&representante1);
-    ticketsAtendidos.push_back(ticket1);
-}
+Ticket PoolTickets::ticket1 = { Poolincidentes::incidente, &PoolClientes::cliente1, 1 };

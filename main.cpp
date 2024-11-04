@@ -2,53 +2,10 @@
 #include <queue>
 #include <string>
 #include <list>
-#include <vector>
 #include "./include/Ticket.h" 
 #include "./include/entidades.h"
+#include "./include/database.h"
 using namespace std;
-
-struct PoolMessageSender{
-    static Email emailSender;
-    static Instagram instagramSender;
-    static Facebook facebookSender;
-    static Whatsapp whatsappSender;
-};
-
-Email PoolMessageSender::emailSender = {};
-Instagram PoolMessageSender::instagramSender = {};
-Facebook PoolMessageSender::facebookSender = {};
-Whatsapp PoolMessageSender::whatsappSender = {};
-
-struct PoolCuentas {
-    static Cuenta cuenta1;
-    static Cuenta cuenta2;
-};
-Cuenta PoolCuentas::cuenta1 = { "Jose@gmail.com", new Email() };
-Cuenta PoolCuentas::cuenta2 = { "Gabriel@gmail.com", new Email() };
-
-struct PoolClientes {
-    static Cliente cliente1;
-    static Cliente cliente2;
-};
-Cliente PoolClientes::cliente1 = {1001, "Jose", list<Cuenta>{ PoolCuentas::cuenta1 }};
-Cliente PoolClientes::cliente2 = {1002, "Gabriel", list<Cuenta>{ PoolCuentas::cuenta2 }};
-
-struct PoolRepresentantes {
-    static Representante representante1;
-    static Representante representante2;
-};
-Representante PoolRepresentantes::representante1 = { 1001, "Santiago" };
-Representante PoolRepresentantes::representante2 = { 1002, "Mateo" };
-
-struct Poolincidentes {
-    static Incidente incidente;
-};
-Incidente Poolincidentes::incidente = { 1001, "Cuando uses la fuerza, acordate de limpiar el lado oscuro" };
-
-struct PoolTickets {
-    static Ticket ticket1;
-};
-Ticket PoolTickets::ticket1 = { Poolincidentes::incidente, &PoolClientes::cliente1, 1 };
 
 list<Representante> representantes;
 list<Cliente> clientes;
@@ -195,7 +152,7 @@ void registrarNuevoCliente(queue<Ticket>& colaMostrador, queue<Ticket>& colaLlam
     clientes.emplace_back( id, nombre, cuentasCliente );
     cout << "Nuevo Cliente registrado." << endl;
 
-    // Registro de cliente en cola de mostrador o llamada
+    // Registro de cliente en cola de mostrador o llamada (deberia estar a parte)
     int tipoIngreso;
     cout << "Tipo de ingreso: 1 para mostrador, 2 para llamada: ";
     cin >> tipoIngreso;
@@ -299,14 +256,13 @@ void gestionarRepresentante(queue<Ticket>& colaMostrador, queue<Ticket>& colaLla
     if (representanteIngresante) {
         int idTicket;
         Ticket* ticketRepresentante = nullptr;
-        std::vector<Ticket> tickets;
 
         bool salir = false;
         while (!salir) {
             int opcionRepresentante = menuRepresentante();
             switch (opcionRepresentante) {
                 case 1:
-                    // Ver Tickets y Mensajes
+                    // Ver Tickets (esto es del ticketManager)
                     for (auto& ticket : ticketsAtendidos) {
                         if (ticket.getRepresentante()->id == representanteIngresante->id) {
                             cout <<"Tickets: "<< endl;
@@ -314,6 +270,7 @@ void gestionarRepresentante(queue<Ticket>& colaMostrador, queue<Ticket>& colaLla
                             cout << endl;
                         }
                     }
+
                     break;
                 case 2:
                     // Leer mensajes de un ticket
