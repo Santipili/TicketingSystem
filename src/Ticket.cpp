@@ -66,10 +66,12 @@ void Ticket::setEstadoTicket(){
         cout << "Seleccione el nuevo estado del ticket con su respectivo numero: " << endl;
         cout << " 1_ Activo " << endl;
         cout << " 2_ Espera" << endl;
+
         cout << " 3_ Re-Abierto " << endl;
         cout << " 4_ Cerrado " << endl;
         cin >> opcion;
     } while (opcion < 1 || opcion > 4);
+
 
     switch (opcion){
         case 1:
@@ -87,7 +89,6 @@ void Ticket::setEstadoTicket(){
         case 4:
         estado_modificable = "Cerrado";
         break;
-
 
     };
 
