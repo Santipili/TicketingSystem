@@ -48,11 +48,11 @@ int menuCliente() {
         cout << "1. Ver tickets" << endl;
         cout << "2. Leer mensajes de un ticket" << endl;
         cout << "3. Agregar nuevo mensaje" << endl;
-        cout << "4. Salir" << endl;
+        cout << "5. Salir" << endl;
         cout << "Seleccione una opcion: ";
         cin >> opcion;
         cin.ignore();
-    } while (opcion < 1 || opcion > 4);
+    } while (opcion < 1 || opcion > 5 || opcion == 4);
     return opcion;
 }
 
@@ -181,8 +181,8 @@ void gestionarClienteExistente(list<Cliente>& clientes, list<Ticket>& ticketsAte
         int idTicket;
         Ticket* ticketCliente = nullptr;
 
-        bool salir = false;
-        while (!salir) {
+        bool salirCliente = false;
+        while (!salirCliente) {
             int opcionCliente = menuCliente();
             switch (opcionCliente) {
                 case 1:
@@ -232,9 +232,12 @@ void gestionarClienteExistente(list<Cliente>& clientes, list<Ticket>& ticketsAte
                     }
                     ticketCliente = nullptr;
                     break;
-                case 4:
-                    salir = true;
-                    break;
+                case 5:
+                salirCliente = true;
+                break;
+                // default:
+                //     salirCliente = true;
+                //     break;
             }
         }
     }
@@ -257,8 +260,8 @@ void gestionarRepresentante(queue<Ticket>& colaMostrador, queue<Ticket>& colaLla
         int idTicket;
         Ticket* ticketRepresentante = nullptr;
 
-        bool salir = false;
-        while (!salir) {
+        bool salirR = false;
+        while (!salirR) {
             int opcionRepresentante = menuRepresentante();
             switch (opcionRepresentante) {
                 case 1:
@@ -356,7 +359,7 @@ void gestionarRepresentante(queue<Ticket>& colaMostrador, queue<Ticket>& colaLla
                     }
                     break;
                 case 7:
-                    salir = true;
+                    salirR = true;
                     break;
             } 
         }     

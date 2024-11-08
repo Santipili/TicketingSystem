@@ -84,9 +84,26 @@ Ticket gestorQueue(){
         return reabierto;
     }
     else{
-    return gestionarRepresentante();}
+    return gestionarRepresentante();
+    }
 }
 
-void crearRelacion(int idRepresentante )
-{}
+void crearRelacion(Ticket ticket, Representante representante)
+{
+    int ticketId = ticket.getTicketId();
+    int repre_id = representante.id;
+    int claveNueva;
+    if(graph.empty()){
+        claveNueva = 1;
+    } else {
+        claveNueva = max_element(graph.begin(), graph.end(),
+        [](const auto& a, const auto& b) {
+                                      return a.first < b.first;
+                                  })->first + 1;}
 
+    graph[claveNueva] = unordered_set<int>();
+    graph[claveNueva].insert(ticketId);
+    graph[claveNueva].insert(repre_id);
+}
+
+}

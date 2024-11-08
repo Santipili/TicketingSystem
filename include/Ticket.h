@@ -1,7 +1,7 @@
 #ifndef TICKET_H
 #define TICKET_H
 
-#include "entidades.h"
+#include "./entidades.h"
 #include <list>
 #include <string>
 

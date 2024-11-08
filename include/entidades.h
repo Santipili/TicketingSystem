@@ -1,7 +1,6 @@
 #ifndef ENTIDADES_H
 #define ENTIDADES_H
 
-#include "./Ticket.h"
 #include "./MessageSender.h"
 #include <string>
 #include <list>
@@ -20,15 +19,10 @@ struct Cuenta
 
 struct Representante
 {
-    Representante() : id(0), nombre("") {};
+    Representante() : id(0), nombre("")  {};
     Representante(int id, string nombre) : id(id), nombre(nombre) {};
     int id;
     string nombre;
-
-    void verTicketsAtendidos(list<Ticket> &ticketsAtendidos) {
-     
-    };
-
 };
 
 struct Cliente
