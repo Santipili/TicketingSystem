@@ -28,10 +28,11 @@ struct Representante
 struct Cliente
 {
     Cliente() : id(0), nombre(""), cuentas() {};
-    Cliente(int id, string nombre, const list <Cuenta> cuentas) : id(id), nombre(nombre), cuentas(cuentas) {};
+    Cliente(int id, string nombre, string direccion, const list <Cuenta> cuentas) : id(id), nombre(nombre), direccion(direccion), cuentas(cuentas) {};
     ~Cliente() {};
     int id;
     string nombre;
+    string direccion;
     list <Cuenta> cuentas;
 
 };

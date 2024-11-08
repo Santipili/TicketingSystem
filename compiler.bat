@@ -2,7 +2,7 @@
 echo Compilando el programa...
 
 :: Intentar compilar el código
-g++ ./src/Ticket.cpp ./src/MessageSender.cpp ./src/database.cpp main.cpp  -o TicketingSystem.exe -lstdc++
+g++ ./src/database.cpp ./src/MessageSender.cpp ./src/Ticket.cpp ./todo/GPT.cpp -o GrafoDijkstra.exe -lstdc++
 
 :: Verificar si la compilación fue exitosa
 if %errorlevel% neq 0 (
@@ -15,7 +15,7 @@ echo Compilacion exitosa.
 echo Ejecutando el programa...
 
 :: Ejecutar el programa
-TicketingSystem.exe
+GrafoDijkstra.exe
 
 :: Pausa para mantener la ventana abierta
 pause

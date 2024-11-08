@@ -24,6 +24,8 @@ struct PoolCuentas {
 struct PoolClientes {
     static Cliente cliente1;
     static Cliente cliente2;
+    static Cliente cliente3;
+
 };
 
 
